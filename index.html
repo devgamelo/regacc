@@ -1,1 +1,583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng Ký Tài Khoản Game NSO</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --cyan: #00c8ff;
+    --cyan-dim: rgba(0,200,255,0.15);
+    --cyan-border: rgba(0,200,255,0.25);
+    --green: #4dffa0;
+    --green-dim: rgba(77,255,160,0.08);
+    --green-border: rgba(77,255,160,0.25);
+    --amber: #ffcc44;
+    --amber-dim: rgba(255,204,68,0.08);
+    --amber-border: rgba(255,204,68,0.28);
+    --bg: #080d1a;
+    --surface: rgba(255,255,255,0.03);
+    --text: #dde6ff;
+    --muted: rgba(180,200,255,0.5);
+  }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── background ── */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,255,0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .bg-glow1 {
+    position: absolute;
+    top: -180px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 420px;
+    background: radial-gradient(ellipse, rgba(0,140,255,0.13) 0%, transparent 65%);
+  }
+  .bg-glow2 {
+    position: absolute;
+    bottom: 0; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(ellipse, rgba(77,255,160,0.06) 0%, transparent 65%);
+  }
+
+  /* ── layout ── */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* ── header ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,200,255,0.07);
+    border: 1px solid var(--cyan-border);
+    border-radius: 100px;
+    padding: 7px 20px;
+    margin-bottom: 24px;
+  }
+  .badge-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: blink 2.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .badge-txt {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3.5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #fff;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+  }
+  .hero-title .hl { color: var(--cyan); }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 48px;
+  }
+
+  /* ── pricing cards ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+
+  .price-card {
+    background: var(--surface);
+    border-radius: 18px;
+    padding: 28px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .price-card:hover { transform: translateY(-3px); }
+  .price-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .price-card.bulk {
+    border: 1px solid var(--green-border);
+    background: var(--green-dim);
+  }
+  .price-card.bulk::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+
+  .price-card.single {
+    border: 1px solid var(--amber-border);
+    background: var(--amber-dim);
+  }
+  .price-card.single::before { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+
+  .pc-tag {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    border-radius: 100px;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+  }
+  .bulk .pc-tag { background: rgba(77,255,160,0.12); color: var(--green); border: 1px solid rgba(77,255,160,0.3); }
+  .single .pc-tag { background: rgba(255,204,68,0.12); color: var(--amber); border: 1px solid rgba(255,204,68,0.3); }
+
+  .pc-price {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .bulk .pc-price { color: var(--green); }
+  .single .pc-price { color: var(--amber); }
+
+  .pc-unit {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .pc-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .pc-features li {
+    font-size: 13px;
+    color: rgba(200,220,255,0.75);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pc-features li::before {
+    content: '';
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .bulk .pc-features li::before { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .single .pc-features li::before { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+  /* ── type selector ── */
+  .section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyan-border), transparent);
+  }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .type-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(0,180,255,0.15);
+    border-radius: 14px;
+    padding: 18px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .type-card:hover {
+    border-color: rgba(0,200,255,0.35);
+    background: rgba(0,150,255,0.07);
+  }
+  .type-card.selected {
+    border-color: var(--cyan);
+    background: var(--cyan-dim);
+  }
+  .type-card.selected .tc-name { color: var(--cyan); }
+
+  .tc-icon { font-size: 28px; margin-bottom: 8px; }
+  .tc-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(200,220,255,0.8);
+    margin-bottom: 4px;
+  }
+  .tc-desc { font-size: 12px; color: var(--muted); }
+
+  /* ── qty selector ── */
+  .qty-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .qty-card {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(0,180,255,0.15);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .qty-card:hover { border-color: rgba(0,200,255,0.35); background: rgba(0,120,255,0.08); }
+  .qty-card.selected { border-color: var(--cyan); background: var(--cyan-dim); }
+  .qty-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 5px; right: 7px;
+    font-size: 10px;
+    color: var(--cyan);
+  }
+
+  .qc-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .qc-lbl { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  .qc-price {
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 100px;
+    padding: 2px 8px;
+    display: inline-block;
+  }
+  .qc-price.g { background: rgba(77,255,160,0.1); color: var(--green); }
+  .qc-price.a { background: rgba(255,204,68,0.1); color: var(--amber); }
+
+  /* custom qty */
+  .custom-input-wrap {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .custom-input-wrap.show { display: flex; }
+  .custom-input-wrap input {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--cyan-border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    width: 140px;
+    transition: border-color 0.2s;
+  }
+  .custom-input-wrap input:focus { border-color: var(--cyan); }
+  .custom-input-wrap input::placeholder { color: rgba(150,170,220,0.35); }
+  .custom-input-wrap .hint { font-size: 13px; color: var(--muted); }
+
+  /* ── summary ── */
+  .summary-box {
+    background: rgba(0,200,100,0.05);
+    border: 1px solid var(--green-border);
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+  }
+
+  .sum-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--green);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .sum-rows { display: flex; flex-direction: column; gap: 10px; }
+
+  .sum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .sum-row .v { color: var(--text); font-weight: 500; }
+  .sum-row.total {
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(200,220,255,0.85);
+    border-top: 1px solid rgba(77,255,160,0.15);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .sum-row.total .v {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    color: var(--green);
+  }
+
+  .notice {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(150,170,220,0.4);
+    line-height: 1.8;
+  }
+  .notice strong { color: rgba(0,200,255,0.7); }
+
+  /* ── footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(0,180,255,0.1);
+    font-size: 12px;
+    color: rgba(150,170,220,0.35);
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 560px) {
+    .qty-grid { grid-template-columns: repeat(3, 1fr); }
+    .type-grid { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="bg-glow1"></div>
+  <div class="bg-glow2"></div>
+</div>
+
+<div class="wrap">
+
+  <!-- header -->
+  <div style="text-align:center; margin-bottom: 48px;">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <div class="badge-txt">NSO · Game Service · Online</div>
+    </div>
+    <div class="hero-title">Đăng Ký Tài Khoản<br><span class="hl">NSO SLL</span></div>
+    <div class="hero-sub">Dịch vụ uy tín · Giao nhanh</div>
+  </div>
+
+  <!-- pricing cards -->
+  <div class="pricing-grid">
+    <div class="price-card bulk">
+      <div class="pc-tag">Đăng ký SLL</div>
+      <div class="pc-price">2.000 – 3.000đ</div>
+      <div class="pc-unit">trên mỗi tài khoản</div>
+      <ul class="pc-features">
+        <li>Sim đăng ký trực tiếp vào tài khoản không mất phí</li>
+        <li>Mua càng nhiều giá càng rẻ, tốc độ nhanh chóng</li>
+        <li>Ưu tiên thanh toán trước</li>
+      </ul>
+    </div>
+    <div class="price-card single">
+      <div class="pc-tag">Mua Lẻ</div>
+      <div class="pc-price">4.000 – 5.000đ</div>
+      <div class="pc-unit">trên mỗi tài khoản</div>    
+    </div>
+  </div>
+
+  <!-- qty selector -->
+  <div class="section-label">Bảng giá chi tiết</div>
+  <div class="qty-grid">
+    <div class="qty-card selected" onclick="selectQty(this,1)">
+      <div class="qc-num">Dưới 5</div>
+      <div class="qc-lbl">tài khoản</div>
+      <span class="qc-price a">5.000đ/1 TK</span>
+    </div>
+    <div class="qty-card" onclick="selectQty(this,5)">
+      <div class="qc-num">6 - 49</div>
+      <div class="qc-lbl">tài khoản</div>
+      <span class="qc-price g">4.000đ/1 TK</span>
+    </div>
+    <div class="qty-card" onclick="selectQty(this,10)">
+      <div class="qc-num">50 - 99</div>
+      <div class="qc-lbl">tài khoản</div>
+      <span class="qc-price g">3.500đ/1 TK</span>
+    </div>
+    <div class="qty-card" onclick="selectQty(this,20)">
+      <div class="qc-num">100 - 499</div>
+      <div class="qc-lbl">tài khoản</div>
+      <span class="qc-price g">3.000đ/1 TK</span>
+    </div>
+     <div class="qty-card" onclick="selectQty(this,20)">
+      <div class="qc-num">500 - 999</div>
+      <div class="qc-lbl">tài khoản</div>
+      <span class="qc-price g">2.500đ/1 TK</span>
+    </div>
+    <div class="qty-card" onclick="selectQty(this,'custom')">
+      <div class="qc-num" id="customNum">…</div>
+      <div class="qc-lbl">Trên 1000</div>
+      <span class="qc-price a">2.000đ/1 TK</span>
+    </div>
+  </div>
+
+  <div class="custom-input-wrap" id="customWrap">
+    <input type="number" id="customInput" min="1" placeholder="Số lượng..." oninput="onCustomInput()" />
+    <span class="hint">tài khoản</span>
+  </div>
+
+
+  <!-- shop contact -->
+  <div class="section-label" style="margin-top:36px;">Liên hệ</div>
+  <div style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px;">
+    <a href="https://zalo.me/0876194536" target="_blank" style="
+      flex:1; min-width:140px; padding:16px 20px;
+      background:rgba(0,150,255,0.1); border:1px solid rgba(0,180,255,0.35);
+      border-radius:12px; text-decoration:none; display:flex; align-items:center;
+      justify-content:center; gap:10px; font-family:'Exo 2',sans-serif;
+      font-size:14px; font-weight:600; color:#00c8ff;
+      transition:background 0.15s, transform 0.15s;">
+      💬 <span>Zalo: <strong>DV Nam</strong></span>
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61590435004588" target="_blank" style="
+      flex:1; min-width:140px; padding:16px 20px;
+      background:rgba(60,100,255,0.1); border:1px solid rgba(80,120,255,0.35);
+      border-radius:12px; text-decoration:none; display:flex; align-items:center;
+      justify-content:center; gap:10px; font-family:'Exo 2',sans-serif;
+      font-size:14px; font-weight:600; color:#7b9fff;
+      transition:background 0.15s, transform 0.15s;">
+      📘 <span>Facebook RD Nam</span>
+    </a>
+  </div>
+
+  <div class="notice">
+    Hỗ trợ 8:00 – 22:00 hàng ngày
+  </div>
+
+  <div class="footer">© 2026 NSO Game Service · All rights reserved</div>
+</div>
+
+<script>
+  let currentType = '2x';
+  let currentQty = 1;
+  let isCustom = false;
+
+  const typeLabels = {
+    '2x': 'Avatar 2X SLL',
+    '3x': 'Avatar 3X SLL',
+    'nso': 'NSO Khác'
+  };
+
+  function fmt(n) {
+    return n.toLocaleString('vi-VN') + 'đ';
+  }
+
+  function unitPrice(qty) {
+    if (qty >= 10) return 2000;
+    if (qty >= 5)  return 2500;
+    if (qty >= 2)  return 3000;
+    return 4000;
+  }
+
+  function updateSummary() {
+    const unit = unitPrice(currentQty);
+    const total = unit * currentQty;
+    document.getElementById('sType').textContent  = typeLabels[currentType];
+    document.getElementById('sQty').textContent   = currentQty + ' tài khoản';
+    document.getElementById('sUnit').textContent  = fmt(unit) + ' / 1';
+    document.getElementById('sTotal').textContent = fmt(total);
+  }
+
+  function selectType(el, type) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    currentType = type;
+    updateSummary();
+  }
+
+  function selectQty(el, qty) {
+    document.querySelectorAll('.qty-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+
+    if (qty === 'custom') {
+      isCustom = true;
+      document.getElementById('customWrap').classList.add('show');
+      const v = parseInt(document.getElementById('customInput').value) || 1;
+      currentQty = v;
+      document.getElementById('customNum').textContent = v || '…';
+    } else {
+      isCustom = false;
+      document.getElementById('customWrap').classList.remove('show');
+      currentQty = qty;
+    }
+    updateSummary();
+  }
+
+  function onCustomInput() {
+    const v = parseInt(document.getElementById('customInput').value) || 1;
+    currentQty = v;
+    document.getElementById('customNum').textContent = v;
+    updateSummary();
+  }
+
+  updateSummary();
+</script>
+</body>
+</html>
